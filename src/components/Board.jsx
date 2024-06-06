@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Column from "./Column";
 import "../styles/board.css"
@@ -7,6 +7,7 @@ import { taskContext } from "../App";
 
 export default function Board() {
     const [data,setData] = useContext(taskContext)
+    const addCard = useRef(null)
     const [completed, setCompleted] = useState([]);
     const [incomplete, setIncomplete] = useState([]);
     const [backlog, setBacklog] = useState([]);
@@ -17,28 +18,39 @@ export default function Board() {
         id:"",
         status:1
     });
-    // const [data,setData] = useState([])  
-
+    const [searchKeyword,setSearchKeyword] = useState("");
+  
     useEffect(() => {
-        // fetch("https://jsonplaceholder.typicode.com/todos")
-        //     .then((response) => response.json())
-        //     .then((json) => {
-        //         setCompleted(json.filter((task) => task.completed));
-        //         setIncomplete(json.filter((task) => !task.completed));
-        //     });
-        // setInReview(data)
+    
        setIncomplete(data.filter((task) => task.status ==1))
        setInReview(data.filter((task) => task.status ==2))
        setCompleted(data.filter((task) => task.status ==3))
-       setBacklog(data.filter((task) => task.status ==4))
     }, [data]);
+    useEffect(() => {
+  
+
+
+        if(searchKeyword !== ""){ 
+
+        setIncomplete(data.filter(task => {return task.task.toLowerCase().includes(searchKeyword.toLowerCase())&& task.status ==1}))
+        setInReview(data.filter(task => {return task.task.toLowerCase().includes(searchKeyword.toLowerCase())&& task.status ==2}))
+        setCompleted(data.filter(task => {return task.task.toLowerCase().includes(searchKeyword.toLowerCase())&& task.status ==3}))
+
+    }else{
+        setIncomplete(data.filter((task) => task.status ==1))
+        setInReview(data.filter((task) => task.status ==2))
+        setCompleted(data.filter((task) => task.status ==3))
+    }
+     }, [searchKeyword]);
+
+   
 
     const handleDragEnd = (result) => {
         const { destination, source, draggableId } = result;
 
         if (!destination || source.droppableId === destination.droppableId) return;
 
-        deletePreviousState(source.droppableId, draggableId);
+      
 
         const task = findItemById(draggableId, [...incomplete, ...completed, ...inReview, ...backlog]);
 
@@ -46,23 +58,7 @@ export default function Board() {
 
     };
 
-    function deletePreviousState(sourceDroppableId, taskId) {
-        switch (sourceDroppableId) {
-            case "1":
-                setIncomplete(removeItemById(taskId, incomplete));
-                break;
-            case "3":
-                setCompleted(removeItemById(taskId, completed));
-                break;
-            case "2":
-                setInReview(removeItemById(taskId, inReview));
-                break;
-            case "4":
-                setBacklog(removeItemById(taskId, backlog));
-                break;
-        }
-
-    }
+   
     function setNewState(destinationDroppableId, task,draggableId) {
         let updatedTask;
         switch (destinationDroppableId) {
@@ -87,15 +83,15 @@ export default function Board() {
                 ));
                 setInReview([updatedTask, ...inReview]);
                 break;
-            case "4":  // BACKLOG
-                updatedTask = { ...task, completed: false };
+            // case "4":  // BACKLOG
+            //     updatedTask = { ...task, completed: false };
 
-                setData(data.map(obj =>
-                    obj.id === draggableId ? { ...obj, status: 4 } : obj
-                ));
+            //     setData(data.map(obj =>
+            //         obj.id === draggableId ? { ...obj, status: 4 } : obj
+            //     ));
 
-                setBacklog([updatedTask, ...backlog]);
-                break;
+            //     setBacklog([updatedTask, ...backlog]);
+            //     break;
         }
     }
     function findItemById(id, array) {
@@ -106,31 +102,40 @@ export default function Board() {
         return array.filter((item) => item.id != id);
     }
 
-    const handleClick = ()=>{
-
-    }
-
+  
     const handelAddTask =(e)=>{
         e.preventDefault();
 // setTask({...task,id:uuidv4()})
 const newTask = ({...task,id:uuidv4()})
 
 setData([...data,newTask]);
-setTask({task:"",dat:"",id:"",status:1})
+setTask({task:"",date:"",id:"",status:1})
     }
 const handleChange=(e)=>{
 setTask({...task,[e.target.name]:e.target.value})
+}
+const hideAddCard =()=>{
+    addCard.current.classList.add("d-none")
+}
+const showAddCard =()=>{
+    addCard.current.classList.remove("d-none")
 }
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
             <div className="heading">
             <h2 style={{ textAlign: "center" }}>PROGRESS BOARD</h2>
-            <span onClick={handleClick}><i class="fa-solid fa-plus"></i></span>
+            <span onClick={showAddCard}><i title="Add New Task" class="fa-solid fa-plus"></i></span>
             </div>
-            <div>
+            <div className="search">
+                <input type="text" name="text" onChange={(e)=>{setSearchKeyword(e.target.value)}} placeholder="Search..."/>
+             
+            </div>
+            <div className="add-task d-none" ref={addCard}>
+                <i onClick={hideAddCard}  class="fa-solid fa-xmark"></i>
                 <form onSubmit={handelAddTask}>
-                    <input type="text" name="task"placeholder="Task" onChange={handleChange} />
-                    <input type="date" name="date" onChange={handleChange}/>
+                    <h2>Add New Task</h2>
+                    <input required type="text" name="task"placeholder="Task" value={task.task} onChange={handleChange} />
+                    <input required type="date" name="date" value={task.date} onChange={handleChange}/>
                     <input type="submit" value="Add"/>
                 </form>
             </div>

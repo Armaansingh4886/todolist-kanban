@@ -17,7 +17,6 @@ useEffect(()=>{
 
 
 useEffect(()=>{
-console.log(data);
 localStorage.setItem('tasks', JSON.stringify(data));
 
 },[data])

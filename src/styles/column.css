@@ -1,10 +1,20 @@
-.column-del{
+.column-icon{
     position: absolute;
     top: 0;
     right: 0;
-    float: right;
-    margin: 1.5% 3%;
+    /* float: right; */
+    margin: 0.5% 3%;
     padding: 5px 10px;
-    border: 2px solid black;
+    /* border: 2px solid black; */
     border-radius: 10px;
+    cursor: pointer;
+}
+
+
+span{
+    float: right;
+    padding: 0 10px;
+}
+span>i{
+    margin: 0 5px;
 }

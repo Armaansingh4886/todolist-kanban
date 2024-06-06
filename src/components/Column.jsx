@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import Card from "./Card";
 import "./scroll.css";
 import "../styles/column.css"
 import { Droppable } from "react-beautiful-dnd";
+import { taskContext } from "../App";
 
 const Container = styled.div`
     background-color: #f4f5f7;
@@ -14,6 +15,7 @@ const Container = styled.div`
     -ms-overflow-style: none;
     scrollbar-width: none;
     border: 1px solid gray;
+    border-radius: 20px;
 `;
 
 const Title = styled.h3`
@@ -31,8 +33,42 @@ const TaskList = styled.div`
 `;
 
 export default function Column({ title, tasks, id }) {
-  const handleDelete =()=>{
+    const [alphaSort,setAlphaSort] = useState('asc');
     
+    const [dateSort,setDateSort] = useState('asc');
+    
+    const [data,setData] = useContext(taskContext);
+    const handleDelete =()=>{
+    setData(data.filter(obj => obj.status !== 3))
+    }
+  const handleAlphaSort =()=>{
+    console.log(tasks);
+    tasks = tasks.sort((a,b)=>{
+        if (alphaSort === 'asc') {
+            return a.task.localeCompare(b.task);
+          } else {
+            return b.task.localeCompare(a.task);
+          }
+    })
+    if(alphaSort==='asc'){
+    setAlphaSort('desc')}else{
+        setAlphaSort('asc')
+    }
+  }
+
+  const handleDateSort =()=>{
+    console.log(tasks);
+    tasks = tasks.sort((a,b)=>{
+        if (dateSort === 'asc') {
+            return a.date.localeCompare(b.date);
+          } else {
+            return b.date.localeCompare(a.date);
+          }
+    })
+    if(dateSort==='asc'){
+    setDateSort('desc')}else{
+        setDateSort('asc')
+    }
   }
     return (
         <Container className="column">
@@ -44,8 +80,12 @@ export default function Column({ title, tasks, id }) {
                 }}
             >
                 {title}
+                <span className="column-icon">
                 
-                {(id==='3')?(<i onClick={handleDelete} className="column-del fa-regular fa-trash-can"></i>):""}
+                <i onClick={handleAlphaSort} title="Sort By Task Name" class={(alphaSort==='asc')?('fa-solid fa-arrow-up-z-a'):('fa-solid fa-arrow-up-a-z')}></i>
+
+                <i onClick={handleDateSort} title="Sort By Due Date" class={(dateSort==='asc')?('fa-solid fa-arrow-up-9-1'):('fa-solid fa-arrow-up-1-9')}></i>
+                {(id==='3')?(<i onClick={handleDelete} title="Delete all completed Tasks" className=" fa-regular fa-trash-can"></i>):""}</span>
             </Title>
             <Droppable droppableId={id}>
                 {(provided, snapshot) => (

@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
-import { Avatar } from "antd";
 import { taskContext } from "../App";
+import '../styles/card.css';
 
 const Container = styled.div`
     border-radius: 10px;
@@ -19,13 +19,18 @@ const Container = styled.div`
     justify-content: space-between;
     flex-direction: column;
 `;
+const TextContent = styled.div`
 
-const TextContent = styled.div``;
+`;
+const Icon = styled.div`
+margin: 0 5px;
+`;
 
 const Icons = styled.div`
     display: flex;
     justify-content: end;
     padding: 2px;
+    
 `;
 function bgcolorChange(props) {
     return props.isDragging
@@ -41,6 +46,16 @@ function bgcolorChange(props) {
 
 export default function Card({ task, index }) {
 const [data,setData] = useContext(taskContext);
+const [isEditing,setIsEditing] =useState(false);
+
+const handleEdit = ()=>{
+
+    setIsEditing(true)
+}
+const handleEditDone = ()=>{
+    setIsEditing(false)
+}
+
     const handleDelete =()=>{
 setData(data.filter(obj => obj.id !== task.id))
     }
@@ -68,13 +83,14 @@ setData(data.filter(obj => obj.id !== task.id))
                         <TextContent>{task.task}</TextContent>
                     </div>
                     <Icons>
-                        <div onClick={handleDelete} style={{zIndex:999,cursor:"pointer"}}>
-                            {/* <Avatar
-                                onClick={() => console.log(task)}
-                                src={"https://joesch.moe/api/v1/random?key=" + task.id}
-                            /> */}
+                    {/* <Icon onClick={(isEditing)?(handleEditDone):(handleEdit)} style={{zIndex:999,cursor:"pointer"}}>
+                            
+                            <i class={(isEditing)?("fa-solid fa-check"):("fa-regular fa-pen-to-square")}></i>
+                        </Icon> */}
+                        <Icon onClick={handleDelete} style={{zIndex:999,cursor:"pointer"}}>
+                            
                             <i class="fa-solid fa-trash"></i>
-                        </div>
+                        </Icon>
                     </Icons>
                     {provided.placeholder}
                 </Container>
