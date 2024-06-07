@@ -41,6 +41,7 @@ export default function Column({ title, tasks, id }) {
     const handleDelete =()=>{
     setData(data.filter(obj => obj.status !== 3))
     }
+    // SORTING ACCORDING TO NAME 
   const handleAlphaSort =()=>{
     console.log(tasks);
     tasks = tasks.sort((a,b)=>{
@@ -55,7 +56,7 @@ export default function Column({ title, tasks, id }) {
         setAlphaSort('asc')
     }
   }
-
+// SORTING ACCORDING TO DUE DATE
   const handleDateSort =()=>{
     console.log(tasks);
     tasks = tasks.sort((a,b)=>{
@@ -87,6 +88,8 @@ export default function Column({ title, tasks, id }) {
                 <i onClick={handleDateSort} title="Sort By Due Date" class={(dateSort==='asc')?('fa-solid fa-arrow-up-9-1'):('fa-solid fa-arrow-up-1-9')}></i>
                 {(id==='3')?(<i onClick={handleDelete} title="Delete all completed Tasks" className=" fa-regular fa-trash-can"></i>):""}</span>
             </Title>
+
+            {/* ADDING CARDS OF TASKS */}
             <Droppable droppableId={id}>
                 {(provided, snapshot) => (
                     <TaskList

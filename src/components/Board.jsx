@@ -19,13 +19,14 @@ export default function Board() {
         status:1
     });
     const [searchKeyword,setSearchKeyword] = useState("");
-  
+
     useEffect(() => {
     
        setIncomplete(data.filter((task) => task.status ==1))
        setInReview(data.filter((task) => task.status ==2))
        setCompleted(data.filter((task) => task.status ==3))
     }, [data]);
+    // SETTING TASK AFTER STATUS CHANGED
     useEffect(() => {
   
 
@@ -43,7 +44,7 @@ export default function Board() {
     }
      }, [searchKeyword]);
 
-   
+// HANDLING DRAG END
 
     const handleDragEnd = (result) => {
         const { destination, source, draggableId } = result;
@@ -52,13 +53,13 @@ export default function Board() {
 
       
 
-        const task = findItemById(draggableId, [...incomplete, ...completed, ...inReview, ...backlog]);
+        const task = findItemById(draggableId, [...incomplete, ...completed, ...inReview]);
 
         setNewState(destination.droppableId, task,draggableId);
 
     };
 
-   
+//    UPDATE STATE AFTER DRAG IS OVER
     function setNewState(destinationDroppableId, task,draggableId) {
         let updatedTask;
         switch (destinationDroppableId) {
@@ -83,15 +84,7 @@ export default function Board() {
                 ));
                 setInReview([updatedTask, ...inReview]);
                 break;
-            // case "4":  // BACKLOG
-            //     updatedTask = { ...task, completed: false };
-
-            //     setData(data.map(obj =>
-            //         obj.id === draggableId ? { ...obj, status: 4 } : obj
-            //     ));
-
-            //     setBacklog([updatedTask, ...backlog]);
-            //     break;
+           
         }
     }
     function findItemById(id, array) {
@@ -126,10 +119,12 @@ const showAddCard =()=>{
             <h2 style={{ textAlign: "center" }}>PROGRESS BOARD</h2>
             <span onClick={showAddCard}><i title="Add New Task" class="fa-solid fa-plus"></i></span>
             </div>
+            {/* SEARCH BAR */}
             <div className="search">
                 <input type="text" name="text" onChange={(e)=>{setSearchKeyword(e.target.value)}} placeholder="Search..."/>
              
             </div>
+            {/* ADDING NEW TASK TO LIST */}
             <div className="add-task d-none" ref={addCard}>
                 <i onClick={hideAddCard}  class="fa-solid fa-xmark"></i>
                 <form onSubmit={handelAddTask}>
@@ -149,11 +144,10 @@ const showAddCard =()=>{
                     margin: "0 auto"
                 }}
             >
-
+{/* CREATING THREE COLUMNS */}
                 <Column title={"TO DO"} tasks={incomplete} id={"1"} />
                 <Column title={"IN REVIEW"} tasks={inReview} id={"2"} />
                 <Column title={"DONE"} tasks={completed} id={"3"} />
-                {/* <Column title={"BACKLOG"} tasks={backlog} id={"4"} /> */}
             </div>
         </DragDropContext>
     );

@@ -34,14 +34,8 @@ const Icons = styled.div`
 `;
 function bgcolorChange(props) {
     return props.isDragging
-        ? "lightgreen"
-        : props.isDraggable
-            ? props.isBacklog
-                ? "#F2D7D5"
-                : "#DCDCDC"
-            : props.isBacklog
-                ? "#F2D7D5"
-                : "#EAF4FC";
+        ? "lightgreen":"#EAF4FC"
+        
 }
 
 export default function Card({ task, index }) {
@@ -62,6 +56,7 @@ setData(data.filter(obj => obj.id !== task.id))
     return (
         <Draggable draggableId={`${task.id}`} key={task.id} index={index}>
             {(provided, snapshot) => (
+                // CARD BODY
                 <Container
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
